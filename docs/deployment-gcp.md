@@ -1,13 +1,125 @@
-# Deployment on Google Cloud
+# Google Cloud Deployment Guide
 
-Services:
+## Architecture
 
-- Cloud Run or Compute Engine
-- Cloud SQL
+```
+Internet → Cloud Load Balancer → Cloud Run (App) → Cloud SQL (PostgreSQL)
+                                       ↕
+                              Container Registry
+```
 
-Notes:
+## Prerequisites
 
-- Images stored in /storage
-- Environment variables configured in deployment
-- Nginx for HTTP routing
-- WebSocket server configured separately
+- Google Cloud SDK installed (`gcloud`)
+- Docker installed
+- A GCP project created
+
+## Services Used
+
+| Service | Purpose |
+|---------|---------|
+| Cloud Run | Hosts the Laravel + Reverb app container |
+| Cloud SQL (PostgreSQL 16) | Managed database |
+| Artifact Registry | Docker image storage |
+| Cloud Load Balancer | HTTPS termination |
+| Secret Manager | Environment secrets |
+
+---
+
+## Step 1: Set up Google Cloud Project
+
+```bash
+gcloud config set project YOUR_PROJECT_ID
+gcloud services enable run.googleapis.com sqladmin.googleapis.com artifactregistry.googleapis.com secretmanager.googleapis.com
+```
+
+## Step 2: Create Cloud SQL PostgreSQL Instance
+
+```bash
+gcloud sql instances create poker-planning-db \
+  --database-version=POSTGRES_16 \
+  --tier=db-f1-micro \
+  --region=us-central1 \
+  --root-password=YOUR_DB_PASSWORD
+
+gcloud sql databases create poker_planning --instance=poker-planning-db
+gcloud sql users create poker_user --instance=poker-planning-db --password=YOUR_USER_PASSWORD
+```
+
+## Step 3: Build and Push Docker Image
+
+```bash
+# Configure Docker for Artifact Registry
+gcloud auth configure-docker us-central1-docker.pkg.dev
+
+# Create repository
+gcloud artifacts repositories create poker-planning \
+  --repository-format=docker \
+  --location=us-central1
+
+# Build and push
+docker build -t us-central1-docker.pkg.dev/YOUR_PROJECT_ID/poker-planning/app:latest .
+docker push us-central1-docker.pkg.dev/YOUR_PROJECT_ID/poker-planning/app:latest
+```
+
+## Step 4: Store Secrets in Secret Manager
+
+```bash
+echo -n "your-app-key" | gcloud secrets create APP_KEY --data-file=-
+echo -n "your-db-password" | gcloud secrets create DB_PASSWORD --data-file=-
+echo -n "your-reverb-secret" | gcloud secrets create REVERB_SECRET --data-file=-
+```
+
+## Step 5: Deploy to Cloud Run
+
+```bash
+gcloud run deploy poker-planning \
+  --image=us-central1-docker.pkg.dev/YOUR_PROJECT_ID/poker-planning/app:latest \
+  --platform=managed \
+  --region=us-central1 \
+  --allow-unauthenticated \
+  --port=80 \
+  --memory=1Gi \
+  --cpu=1 \
+  --min-instances=1 \
+  --set-env-vars="APP_ENV=production,DB_CONNECTION=pgsql,DB_HOST=/cloudsql/YOUR_PROJECT_ID:us-central1:poker-planning-db,DB_DATABASE=poker_planning,DB_USERNAME=poker_user,BROADCAST_CONNECTION=reverb,QUEUE_CONNECTION=database" \
+  --set-secrets="APP_KEY=APP_KEY:latest,DB_PASSWORD=DB_PASSWORD:latest,REVERB_APP_SECRET=REVERB_SECRET:latest" \
+  --add-cloudsql-instances=YOUR_PROJECT_ID:us-central1:poker-planning-db
+```
+
+## Step 6: Run Migrations
+
+```bash
+gcloud run jobs create migrate \
+  --image=us-central1-docker.pkg.dev/YOUR_PROJECT_ID/poker-planning/app:latest \
+  --command="php" \
+  --args="artisan,migrate,--force" \
+  --region=us-central1 \
+  --set-cloudsql-instances=YOUR_PROJECT_ID:us-central1:poker-planning-db
+
+gcloud run jobs execute migrate --region=us-central1
+```
+
+## WebSockets (Laravel Reverb)
+
+Reverb runs on port 8080 inside the container. Cloud Run supports WebSocket connections natively.
+
+Ensure the Cloud Run service allows port 8080 traffic (via the Nginx proxy config already set up in `docker/nginx/default.conf`).
+
+## File Storage
+
+Images are stored in `/storage/app/public` within the container. For persistent storage across Cloud Run instances, mount a Cloud Storage FUSE volume or use a shared NFS. The application uses `/storage` as specified and stores only file paths in the database.
+
+## Environment Variables Summary
+
+| Variable | Description |
+|----------|-------------|
+| `APP_KEY` | Laravel application key |
+| `APP_ENV` | `production` |
+| `DB_HOST` | Cloud SQL socket path |
+| `DB_DATABASE` | `poker_planning` |
+| `DB_USERNAME` | Database user |
+| `DB_PASSWORD` | Database password (via Secret Manager) |
+| `BROADCAST_CONNECTION` | `reverb` |
+| `REVERB_APP_KEY` | Reverb app key |
+| `REVERB_APP_SECRET` | Reverb app secret |
