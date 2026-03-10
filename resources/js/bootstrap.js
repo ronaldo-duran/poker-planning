@@ -15,4 +15,11 @@ window.Echo = new Echo({
     wssPort: import.meta.env.VITE_REVERB_PORT ?? 443,
     forceTLS: (import.meta.env.VITE_REVERB_SCHEME ?? 'http') === 'https',
     enabledTransports: ['ws', 'wss'],
+    authEndpoint: '/api/broadcasting/auth',
+    auth: {
+        headers: {
+            Authorization: localStorage.getItem('token') ? `Bearer ${localStorage.getItem('token')}` : '',
+            'X-Requested-With': 'XMLHttpRequest',
+        },
+    },
 });

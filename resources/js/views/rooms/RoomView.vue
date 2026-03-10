@@ -36,6 +36,8 @@
           + {{ $t('vote.newSession') }}
         </button>
         <button v-if="session && session.status === 'open'" @click="reveal"
+          :disabled="revealPending"
+          :class="revealPending ? 'opacity-60 cursor-not-allowed' : ''"
           class="bg-green-600 hover:bg-green-700 text-white text-sm px-4 py-1.5 rounded-lg font-semibold transition">
           {{ $t('vote.revealCards') }}
         </button>
@@ -138,6 +140,12 @@
                   {{ user.name?.charAt(0)?.toUpperCase() }}
                 </div>
                 <div :class="user._online !== false ? 'bg-green-400' : 'bg-gray-300'" class="absolute -bottom-0.5 -right-0.5 w-3 h-3 rounded-full border-2 border-white dark:border-gray-800"></div>
+                <div
+                  v-if="user._reaction"
+                  class="absolute -top-5 left-1/2 -translate-x-1/2 text-2xl pointer-events-none animate-[emoji-pop_1.2s_ease-out]"
+                >
+                  {{ user._reaction }}
+                </div>
               </div>
               <div class="flex-1 min-w-0">
                 <p class="text-sm font-medium text-gray-900 dark:text-white truncate">
@@ -155,8 +163,17 @@
         </div>
       </div>
     </div>
+
   </div>
 </template>
+
+<style scoped>
+@keyframes emoji-pop {
+  0% { transform: translate(-50%, 8px) scale(0.8); opacity: 0; }
+  20% { opacity: 1; }
+  100% { transform: translate(-50%, -24px) scale(1.15); opacity: 0; }
+}
+</style>
 
 <script setup>
 import { ref, computed, onMounted, onUnmounted } from 'vue';
@@ -170,6 +187,7 @@ const roomStore = useRoomStore();
 const authStore = useAuthStore();
 const loading = ref(true);
 const linkCopied = ref(false);
+const revealPending = ref(false);
 const selectedState = ref('waiting');
 const availableEmojis = ['👍', '👎', '🎉', '😂', '🤔', '🔥', '❤️', '😮', '👏', '🚀'];
 
@@ -214,15 +232,22 @@ onMounted(async () => {
         );
       }
     })
+    .listen('.session.started', ({ session }) => {
+      roomStore.setSession(session);
+    })
     .listen('.vote.submitted', ({ user_id }) => {
       roomStore.markUserVoted(user_id);
     })
     .listen('.reveal.started', ({ votes, average }) => {
+      revealPending.value = false;
       if (roomStore.currentSession) {
         roomStore.currentSession.votes = votes;
         roomStore.currentSession.average = average;
       }
       roomStore.startReveal({ votes, average });
+    })
+    .listen('.emoji.sent', ({ emoji, sender_id }) => {
+      roomStore.setUserReaction(sender_id, emoji);
     })
     .listen('.room.state_changed', ({ state }) => {
       roomStore.updateRoomState(state);
@@ -246,11 +271,13 @@ async function castVote(value) {
 }
 
 async function reveal() {
-  if (!session.value) return;
+  if (!session.value || revealPending.value) return;
+  revealPending.value = true;
   try {
-    const { data } = await axios.post(`/api/sessions/${session.value.id}/reveal`);
-    roomStore.startReveal(data);
-  } catch {}
+    await axios.post(`/api/sessions/${session.value.id}/reveal`);
+  } catch {
+    revealPending.value = false;
+  }
 }
 
 async function newSession() {

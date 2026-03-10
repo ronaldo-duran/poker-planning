@@ -8,8 +8,17 @@ export const useRoomStore = defineStore('room', () => {
     const myVote = ref(null);
     const revealed = ref(false);
     const countdown = ref(null);
+    const reactionTimeouts = new Map();
 
     function setRoom(room) {
+        if (room?.users) {
+            room.users = room.users.map(u => ({
+                ...u,
+                _voted: u._voted ?? false,
+                _reaction: u._reaction ?? null,
+            }));
+        }
+
         currentRoom.value = room;
     }
 
@@ -17,6 +26,19 @@ export const useRoomStore = defineStore('room', () => {
         currentSession.value = session;
         myVote.value = null;
         revealed.value = false;
+        countdown.value = null;
+
+        // Start a clean round: everyone must vote again.
+        if (currentRoom.value?.users) {
+            currentRoom.value.users = currentRoom.value.users.map(u => ({ ...u, _voted: false }));
+        }
+    }
+
+    function clearSession() {
+        currentSession.value = null;
+        myVote.value = null;
+        revealed.value = false;
+        countdown.value = null;
     }
 
     function setMyVote(vote) {
@@ -24,6 +46,15 @@ export const useRoomStore = defineStore('room', () => {
     }
 
     function startReveal(sessionData) {
+        // Prevent duplicate animation runs caused by overlapping HTTP + WebSocket updates.
+        if (countdown.value !== null || revealed.value || currentSession.value?.status === 'revealed') {
+            return;
+        }
+
+        if (currentSession.value) {
+            currentSession.value = { ...currentSession.value, status: 'revealing' };
+        }
+
         let count = 3;
         countdown.value = count;
         const interval = setInterval(() => {
@@ -34,7 +65,7 @@ export const useRoomStore = defineStore('room', () => {
                 countdown.value = null;
                 revealed.value = true;
                 if (currentSession.value) {
-                    currentSession.value = { ...currentSession.value, ...sessionData };
+                    currentSession.value = { ...currentSession.value, ...sessionData, status: 'revealed' };
                 }
             }
         }, 1000);
@@ -56,8 +87,35 @@ export const useRoomStore = defineStore('room', () => {
 
     function addUser(user) {
         if (currentRoom.value?.users && !currentRoom.value.users.find(u => u.id === user.id)) {
-            currentRoom.value.users.push(user);
+            currentRoom.value.users.push({ ...user, _voted: false, _reaction: null });
         }
+    }
+
+    function setUserReaction(userId, emoji) {
+        if (!currentRoom.value?.users) {
+            return;
+        }
+
+        currentRoom.value.users = currentRoom.value.users.map(u =>
+            u.id === userId ? { ...u, _reaction: emoji } : u
+        );
+
+        const previousTimeout = reactionTimeouts.get(userId);
+        if (previousTimeout) {
+            clearTimeout(previousTimeout);
+        }
+
+        const timeoutId = setTimeout(() => {
+            if (currentRoom.value?.users) {
+                currentRoom.value.users = currentRoom.value.users.map(u =>
+                    u.id === userId ? { ...u, _reaction: null } : u
+                );
+            }
+
+            reactionTimeouts.delete(userId);
+        }, 1200);
+
+        reactionTimeouts.set(userId, timeoutId);
     }
 
     function removeUser(userId) {
@@ -69,12 +127,22 @@ export const useRoomStore = defineStore('room', () => {
     async function loadRoom(id) {
         const { data } = await axios.get(`/api/rooms/${id}`);
         setRoom(data);
+
+        const sessions = data.vote_sessions ?? data.voteSessions ?? [];
+        const activeSession = sessions.find(s => s.status === 'open') ?? sessions[0] ?? null;
+
+        if (activeSession) {
+            setSession(activeSession);
+        } else {
+            clearSession();
+        }
+
         return data;
     }
 
     return {
         currentRoom, currentSession, myVote, revealed, countdown,
-        setRoom, setSession, setMyVote, startReveal, updateRoomState,
-        markUserVoted, addUser, removeUser, loadRoom,
+        setRoom, setSession, clearSession, setMyVote, startReveal, updateRoomState,
+        markUserVoted, addUser, removeUser, setUserReaction, loadRoom,
     };
 });

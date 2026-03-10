@@ -10,6 +10,8 @@ class Emoji extends Model
 {
     use HasFactory;
 
+    protected $table = 'emojis';
+
     protected $fillable = [
         'room_id',
         'sender_id',

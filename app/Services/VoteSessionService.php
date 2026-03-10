@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Events\RevealStarted;
+use App\Events\SessionStarted;
 use App\Events\VoteSubmitted;
 use App\Models\Room;
 use App\Models\VoteSession;
@@ -24,12 +25,16 @@ class VoteSessionService
             $this->sessionRepository->update($active, ['status' => 'closed']);
         }
 
-        return $this->sessionRepository->create([
+        $session = $this->sessionRepository->create([
             'room_id' => $room->id,
             'story_title' => $data['story_title'] ?? null,
             'story_description' => $data['story_description'] ?? null,
             'status' => 'open',
         ]);
+
+        broadcast(new SessionStarted($session))->toOthers();
+
+        return $session;
     }
 
     public function submitVote(int $sessionId, int $userId, string $value): void
