@@ -252,6 +252,11 @@ onMounted(async () => {
     .listen('.room.state_changed', ({ state }) => {
       roomStore.updateRoomState(state);
       selectedState.value = state;
+    })
+    .listen('.room.emojis_toggled', ({ emojis_blocked }) => {
+      if (roomStore.currentRoom) {
+        roomStore.currentRoom.emojis_blocked = emojis_blocked;
+      }
     });
 });
 

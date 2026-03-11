@@ -2,12 +2,14 @@
 
 namespace App\Services;
 
+use App\Events\RoomEmojisToggled;
 use App\Events\RoomStateChanged;
 use App\Events\UserJoinedRoom;
 use App\Events\UserLeftRoom;
 use App\Models\Room;
 use App\Models\User;
 use App\Repositories\Contracts\RoomRepositoryInterface;
+use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Str;
 
 class RoomService
@@ -16,12 +18,18 @@ class RoomService
         private readonly RoomRepositoryInterface $roomRepository,
     ) {}
 
-    public function createRoom(User $user, array $data): Room
+    public function createRoom(User $user, array $data, ?UploadedFile $logo = null): Room
     {
+        $logoPath = null;
+
+        if ($logo) {
+            $logoPath = $logo->store('logos', 'public');
+        }
+
         $room = $this->roomRepository->create([
             'name' => $data['name'],
             'code' => $this->generateUniqueCode(),
-            'logo' => $data['logo'] ?? null,
+            'logo' => $logoPath,
             'host_id' => $user->id,
             'card_config' => $data['card_config'] ?? [0, 1, 2, 3, 5, 8, 13, 21, '?'],
             'state' => 'waiting',
@@ -67,7 +75,10 @@ class RoomService
 
     public function toggleEmojis(Room $room): Room
     {
-        return $this->roomRepository->update($room, ['emojis_blocked' => ! $room->emojis_blocked]);
+        $updated = $this->roomRepository->update($room, ['emojis_blocked' => ! $room->emojis_blocked]);
+        broadcast(new RoomEmojisToggled($updated, $updated->emojis_blocked));
+
+        return $updated;
     }
 
     private function generateUniqueCode(): string

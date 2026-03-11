@@ -27,15 +27,24 @@ class RoomController extends Controller
 
     public function store(CreateRoomRequest $request): JsonResponse
     {
-        $room = $this->roomService->createRoom($request->user(), $request->validated());
+        $room = $this->roomService->createRoom($request->user(), $request->validated(), $request->file('logo'));
 
         return response()->json($room, 201);
     }
 
-    public function show(int $id): JsonResponse
+    public function show(Request $request, int $id): JsonResponse
     {
         $room = $this->roomRepository->findById($id);
+
         if (! $room) {
+            return response()->json(['message' => 'Room not found.'], 404);
+        }
+
+        $user = $request->user();
+        $isHost = $room->host_id === $user->id;
+        $isMember = $room->users()->where('users.id', $user->id)->exists();
+
+        if (! $isHost && ! $isMember) {
             return response()->json(['message' => 'Room not found.'], 404);
         }
 

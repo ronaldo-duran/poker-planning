@@ -11,6 +11,10 @@ class EmojiService
 {
     public function sendEmoji(Room $room, User $sender, string $emoji, ?int $targetId = null): Emoji
     {
+        if (! $room->users()->where('user_id', $sender->id)->exists()) {
+            abort(403, 'You are not a member of this room.');
+        }
+
         if ($room->emojis_blocked) {
             abort(403, 'Emojis are blocked in this room.');
         }

@@ -29,9 +29,15 @@ class VoteSessionController extends Controller
 
     public function submitVote(SubmitVoteRequest $request, VoteSession $voteSession): JsonResponse
     {
+        $user = $request->user();
+
+        if (! $voteSession->room->users()->where('user_id', $user->id)->exists()) {
+            return response()->json(['message' => 'Forbidden.'], 403);
+        }
+
         $this->voteSessionService->submitVote(
             $voteSession->id,
-            $request->user()->id,
+            $user->id,
             $request->validated()['value'],
         );
 
@@ -46,8 +52,16 @@ class VoteSessionController extends Controller
         return response()->json($session);
     }
 
-    public function show(VoteSession $voteSession): JsonResponse
+    public function show(Request $request, VoteSession $voteSession): JsonResponse
     {
+        $user = $request->user();
+        $isMember = $voteSession->room->users()->where('user_id', $user->id)->exists();
+        $isHost = $voteSession->room->host_id === $user->id;
+
+        if (! ($isMember || $isHost)) {
+            return response()->json(['message' => 'Forbidden.'], 403);
+        }
+
         return response()->json($this->sessionRepository->findById($voteSession->id));
     }
 }

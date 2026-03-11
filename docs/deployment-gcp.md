@@ -48,6 +48,9 @@ gcloud sql users create poker_user --instance=poker-planning-db --password=YOUR_
 
 ## Step 3: Build and Push Docker Image
 
+> **Important:** Vite inlines `VITE_REVERB_*` variables at **build time**. You must supply the
+> correct values when building the Docker image so the SPA can connect to Reverb in production.
+
 ```bash
 # Configure Docker for Artifact Registry
 gcloud auth configure-docker us-central1-docker.pkg.dev
@@ -57,9 +60,31 @@ gcloud artifacts repositories create poker-planning \
   --repository-format=docker \
   --location=us-central1
 
-# Build and push
-docker build -t us-central1-docker.pkg.dev/YOUR_PROJECT_ID/poker-planning/app:latest .
+# Build with VITE_REVERB_* build args (replace values with your production domain/ports)
+docker build \
+  --build-arg VITE_REVERB_APP_KEY=your-reverb-key \
+  --build-arg VITE_REVERB_HOST=yourapp.example.com \
+  --build-arg VITE_REVERB_PORT=443 \
+  --build-arg VITE_REVERB_SCHEME=https \
+  -t us-central1-docker.pkg.dev/YOUR_PROJECT_ID/poker-planning/app:latest .
+
 docker push us-central1-docker.pkg.dev/YOUR_PROJECT_ID/poker-planning/app:latest
+```
+
+### Dockerfile build args for VITE variables
+
+Add these `ARG`/`ENV` declarations to the frontend build stage in your `Dockerfile` so the Vite
+build process can pick them up:
+
+```dockerfile
+ARG VITE_REVERB_APP_KEY
+ARG VITE_REVERB_HOST
+ARG VITE_REVERB_PORT=443
+ARG VITE_REVERB_SCHEME=https
+ENV VITE_REVERB_APP_KEY=$VITE_REVERB_APP_KEY
+ENV VITE_REVERB_HOST=$VITE_REVERB_HOST
+ENV VITE_REVERB_PORT=$VITE_REVERB_PORT
+ENV VITE_REVERB_SCHEME=$VITE_REVERB_SCHEME
 ```
 
 ## Step 4: Store Secrets in Secret Manager
@@ -123,3 +148,4 @@ Images are stored in `/storage/app/public` within the container. For persistent 
 | `BROADCAST_CONNECTION` | `reverb` |
 | `REVERB_APP_KEY` | Reverb app key |
 | `REVERB_APP_SECRET` | Reverb app secret |
+| `REVERB_ALLOWED_ORIGINS` | Comma-separated allowed origins (e.g. `https://yourapp.com`) |

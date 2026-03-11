@@ -31,14 +31,14 @@ class SessionStarted implements ShouldBroadcast
     {
         return [
             'session' => [
-                'id'                => $this->session->id,
-                'room_id'           => $this->session->room_id,
-                'story_title'       => $this->session->story_title,
+                'id' => $this->session->id,
+                'room_id' => $this->session->room_id,
+                'story_title' => $this->session->story_title,
                 'story_description' => $this->session->story_description,
-                'status'            => $this->session->status,
-                'average'           => $this->session->average,
-                'revealed_at'       => $this->session->revealed_at,
-                'created_at'        => $this->session->created_at,
+                'status' => $this->session->status,
+                'average' => $this->session->average,
+                'revealed_at' => $this->session->revealed_at,
+                'created_at' => $this->session->created_at,
             ],
         ];
     }

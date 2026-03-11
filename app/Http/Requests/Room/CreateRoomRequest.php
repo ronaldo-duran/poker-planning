@@ -17,7 +17,7 @@ class CreateRoomRequest extends FormRequest
             'name' => ['required', 'string', 'max:255'],
             'card_config' => ['sometimes', 'array'],
             'card_config.*' => ['required'],
-            'logo' => ['sometimes', 'nullable', 'image', 'mimes:jpg,jpeg,png,webp,svg', 'max:2048'],
+            'logo' => ['sometimes', 'nullable', 'image', 'mimes:jpg,jpeg,png,webp', 'max:2048'],
         ];
     }
 }
