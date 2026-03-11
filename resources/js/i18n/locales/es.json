@@ -1,0 +1,79 @@
+{
+  "app": {
+    "name": "Planning Poker",
+    "tagline": "Estimación ágil, simplificada"
+  },
+  "nav": {
+    "home": "Inicio",
+    "login": "Iniciar sesión",
+    "register": "Registrarse",
+    "logout": "Cerrar sesión",
+    "profile": "Perfil"
+  },
+  "auth": {
+    "login": "Iniciar sesión",
+    "register": "Registrarse",
+    "email": "Correo electrónico",
+    "password": "Contraseña",
+    "confirmPassword": "Confirmar contraseña",
+    "name": "Nombre completo",
+    "loginButton": "Entrar",
+    "registerButton": "Crear cuenta",
+    "noAccount": "¿No tienes cuenta?",
+    "hasAccount": "¿Ya tienes cuenta?",
+    "forgotPassword": "¿Olvidaste tu contraseña?"
+  },
+  "room": {
+    "create": "Crear sala",
+    "join": "Unirse a sala",
+    "name": "Nombre de la sala",
+    "code": "Código de sala",
+    "enterCode": "Ingresa el código",
+    "joinButton": "Unirse",
+    "createButton": "Crear",
+    "waiting": "Esperando",
+    "voting": "Votando",
+    "discussion": "Discusión",
+    "break": "Descanso",
+    "participants": "Participantes",
+    "host": "Anfitrión",
+    "spectator": "Espectador",
+    "copyLink": "Copiar enlace",
+    "linkCopied": "¡Enlace copiado!",
+    "emojisBlocked": "Emojis bloqueados",
+    "toggleEmojis": "Activar/desactivar emojis",
+    "noRooms": "Sin salas aún",
+    "myRooms": "Mis salas"
+  },
+  "vote": {
+    "newSession": "Nueva sesión",
+    "storyTitle": "Título de historia",
+    "storyDescription": "Descripción de historia",
+    "startVoting": "Iniciar votación",
+    "revealCards": "Revelar cartas",
+    "revealing": "Revelando en...",
+    "average": "Promedio",
+    "yourVote": "Tu voto",
+    "waitingReveal": "Esperando revelación...",
+    "voted": "Votó",
+    "notVoted": "Sin votar",
+    "allVoted": "¡Todos han votado!",
+    "resetVote": "Nueva ronda"
+  },
+  "profile": {
+    "title": "Mi perfil",
+    "bio": "Biografía",
+    "avatar": "Foto de perfil",
+    "uploadAvatar": "Subir foto",
+    "saveChanges": "Guardar cambios",
+    "saved": "¡Perfil guardado!"
+  },
+  "common": {
+    "save": "Guardar",
+    "cancel": "Cancelar",
+    "close": "Cerrar",
+    "loading": "Cargando...",
+    "error": "Ocurrió un error",
+    "success": "Éxito"
+  }
+}

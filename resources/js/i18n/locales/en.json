@@ -1,0 +1,79 @@
+{
+  "app": {
+    "name": "Planning Poker",
+    "tagline": "Agile estimation, made simple"
+  },
+  "nav": {
+    "home": "Home",
+    "login": "Login",
+    "register": "Register",
+    "logout": "Logout",
+    "profile": "Profile"
+  },
+  "auth": {
+    "login": "Login",
+    "register": "Register",
+    "email": "Email address",
+    "password": "Password",
+    "confirmPassword": "Confirm password",
+    "name": "Full name",
+    "loginButton": "Sign in",
+    "registerButton": "Create account",
+    "noAccount": "Don't have an account?",
+    "hasAccount": "Already have an account?",
+    "forgotPassword": "Forgot your password?"
+  },
+  "room": {
+    "create": "Create Room",
+    "join": "Join Room",
+    "name": "Room name",
+    "code": "Room code",
+    "enterCode": "Enter room code",
+    "joinButton": "Join",
+    "createButton": "Create",
+    "waiting": "Waiting",
+    "voting": "Voting",
+    "discussion": "Discussion",
+    "break": "Break",
+    "participants": "Participants",
+    "host": "Host",
+    "spectator": "Spectator",
+    "copyLink": "Copy Link",
+    "linkCopied": "Link copied!",
+    "emojisBlocked": "Emojis blocked",
+    "toggleEmojis": "Toggle Emojis",
+    "noRooms": "No rooms yet",
+    "myRooms": "My Rooms"
+  },
+  "vote": {
+    "newSession": "New Session",
+    "storyTitle": "Story title",
+    "storyDescription": "Story description",
+    "startVoting": "Start Voting",
+    "revealCards": "Reveal Cards",
+    "revealing": "Revealing in...",
+    "average": "Average",
+    "yourVote": "Your vote",
+    "waitingReveal": "Waiting for reveal...",
+    "voted": "Voted",
+    "notVoted": "Not voted",
+    "allVoted": "Everyone has voted!",
+    "resetVote": "New Round"
+  },
+  "profile": {
+    "title": "My Profile",
+    "bio": "Bio",
+    "avatar": "Profile photo",
+    "uploadAvatar": "Upload photo",
+    "saveChanges": "Save changes",
+    "saved": "Profile saved!"
+  },
+  "common": {
+    "save": "Save",
+    "cancel": "Cancel",
+    "close": "Close",
+    "loading": "Loading...",
+    "error": "An error occurred",
+    "success": "Success"
+  }
+}
