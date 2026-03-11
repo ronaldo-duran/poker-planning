@@ -1,0 +1,367 @@
+
+   PASS  Tests\Unit\ExampleTest
+  Ô£ô that true is true                                                    0.01s  
+
+   PASS  Tests\Unit\Models\RoomTest
+  Ô£ô room belongs to host                                                 1.05s  
+  Ô£ô room has many users                                                  0.15s  
+  Ô£ô room has many vote sessions                                          0.18s  
+  Ô£ô room has active sessions                                             0.31s  
+  Ô£ô room card config is array                                            0.16s  
+  Ô£ô room fillable attributes                                             0.10s  
+
+   PASS  Tests\Unit\Models\UserTest
+  Ô£ô user has hosted rooms                                                0.11s  
+  Ô£ô user belongs to many rooms                                           0.13s  
+  Ô£ô user has votes                                                       0.21s  
+  Ô£ô user fillable attributes                                             0.16s  
+  Ô£ô user password is hidden                                              0.15s  
+
+   PASS  Tests\Unit\Models\VoteSessionTest
+  Ô£ô vote session belongs to room                                         0.30s  
+  Ô£ô vote session has many votes                                          0.23s  
+  Ô£ô vote session fillable attributes                                     0.17s  
+  Ô£ô vote session average calculation                                     0.14s  
+
+   PASS  Tests\Unit\Repositories\RoomRepositoryTest
+  Ô£ô find by id returns room                                              0.14s  
+  Ô£ô find by id returns null if not found                                 0.10s  
+  Ô£ô find by code returns room                                            0.11s  
+  Ô£ô find by code returns null if not found                               0.10s  
+  Ô£ô create stores room                                                   0.10s  
+  Ô£ô update modifies room                                                 0.11s  
+  Ô£ô delete removes room                                                  0.11s  
+  Ô£ô paginate for user returns hosted and member rooms                    0.12s  
+
+   PASS  Tests\Unit\Services\AuthServiceTest
+  Ô£ô register creates user with hashed password                           0.14s  
+  Ô£ô register returns auth token                                          0.11s  
+  Ô£ô login returns user and token with correct credentials                0.13s  
+  Ô£ô login throws validation exception with wrong password                0.23s  
+  Ô£ô login throws validation exception with nonexistent user              0.11s  
+  Ô£ô login deletes previous tokens                                        0.15s  
+  Ô£ô logout deletes user token                                            0.14s  
+  Ô£ô logout does not fail if no token exists                              0.13s  
+
+   PASS  Tests\Unit\Services\EmojiServiceTest
+  Ô£ô send emoji creates emoji record                                      0.17s  
+  Ô£ô send emoji with target user                                          0.13s  
+  Ô£ô send emoji fails if sender not in room                               0.11s  
+  Ô£ô send emoji fails if emojis are blocked                               0.12s  
+
+   PASS  Tests\Unit\Services\RoomServiceTest
+  Ô£ô create room stores room in database                                  0.12s  
+  Ô£ô create room generates unique code                                    0.13s  
+  Ô£ô create room attaches host as user                                    0.12s  
+  Ô£ô join room adds user to room                                          0.16s  
+  Ô£ô join room sets user online                                           0.18s  
+  Ô£ô join room fails with invalid code                                    0.13s  
+  Ô£ô leave room sets user offline                                         0.20s  
+  Ô£ô update state changes room state                                      0.14s  
+  Ô£ô toggle emojis toggles emojis blocked                                 0.25s  
+
+   PASS  Tests\Unit\Services\VoteSessionServiceTest
+  Ô£ô create session creates session in database                           0.16s  
+  Ô£ô create session closes previous open sessions                         0.13s  
+  Ô£ô submit vote stores vote for user                                     0.16s  
+  Ô£ô submit vote updates existing vote                                    0.17s  
+  Ô£ô submit vote fails on closed session                                  0.14s  
+  Ô£ô reveal votes calculates average of numeric votes                     0.22s  
+  Ô£ô reveal votes excludes non numeric votes from average                 0.22s  
+
+   FAIL  Tests\Feature\Auth\AuthApiTest
+  Ô¿» register returns user and token                                      0.22s  
+  Ô¿» register validates required fields                                   0.12s  
+  Ô¿» register validates email format                                      0.11s  
+  Ô¿» register validates unique email                                      0.12s  
+  Ô¿» login returns user and token                                         0.12s  
+  Ô¿» login fails with wrong password                                      0.12s  
+  Ô¿» login fails with nonexistent email                                   0.12s  
+  Ô¿» logout deletes token                                                 0.13s  
+  Ô¿» logout requires authentication                                       0.12s  
+  Ô¿» me returns authenticated user                                        0.17s  
+  Ô¿» me requires authentication                                           0.13s  
+
+   FAIL  Tests\Feature\E2E\PlanningPokerFlowTest
+  Ô£ô complete planning poker session                                      0.46s  
+  Ô£ô multiple voting sessions                                             0.30s  
+  Ô¿» emoji reactions during session                                       0.17s  
+  Ô£ô room management flow                                                 0.21s  
+  Ô£ô user can join and leave room                                         0.26s  
+
+   FAIL  Tests\Feature\Emoji\EmojiApiTest
+  Ô£ô send emoji broadcasts emoji to room                                  0.17s  
+  Ô£ô send emoji without target                                            0.13s  
+  Ô£ô send emoji fails if user not member                                  0.15s  
+  Ô£ô send emoji fails if emojis blocked                                   0.12s  
+  Ô¿» send emoji requires authentication                                   0.12s  
+
+   PASS  Tests\Feature\ExampleTest
+  Ô£ô the application returns a successful response                        0.10s  
+
+   FAIL  Tests\Feature\Room\RoomApiTest
+  Ô¿» index returns paginated user rooms                                   0.15s  
+  Ô£ô store creates room as authenticated user                             0.27s  
+  Ô£ô store requires room name                                             0.14s  
+  Ô£ô show returns room details for host                                   0.17s  
+  Ô£ô show returns room details for member                                 0.17s  
+  Ô£ô show returns 404 for non member                                      0.15s  
+  Ô£ô join adds user to room                                               0.20s  
+  Ô¿» join fails with invalid code                                         0.13s  
+  Ô£ô leave sets user offline                                              0.16s  
+  Ô£ô update state changes room state                                      0.15s  
+  Ô£ô update state requires authorization                                  0.15s  
+  Ô£ô toggle emojis toggles emojis blocked                                 0.16s  
+  Ô£ô toggle emojis requires authorization                                 0.24s  
+
+   PASS  Tests\Feature\Vote\VoteSessionApiTest
+  Ô£ô store creates vote session                                           0.18s  
+  Ô£ô store requires host authorization                                    0.09s  
+  Ô£ô submit vote stores vote                                              0.13s  
+  Ô£ô submit vote fails if user not member                                 0.11s  
+  Ô£ô reveal shows all votes                                               0.15s  
+  Ô£ô reveal requires host authorization                                   0.11s  
+  Ô£ô show returns session details                                         0.13s  
+  Ô£ô show hides votes for non host in open session                        0.18s  
+  Ô£ô show returns votes for host in open session                          0.17s  
+  Ô£ô show returns votes for non host in revealed session                  0.16s  
+  ÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇ  
+   FAILED  Tests\Feature\Auth\AuthApiTest > register returns user and token     
+  Expected response status code [201] but received 405.
+Failed asserting that 405 is identical to 201.
+
+  at tests\Feature\Auth\AuthApiTest.php:27
+     23Ôûò         // Act
+     24Ôûò         $response = $this->postJson('/api/auth/register', $data);
+     25Ôûò 
+     26Ôûò         // Assert
+  Ô×£  27Ôûò         $response->assertCreated()
+     28Ôûò                  ->assertJsonStructure([
+     29Ôûò                      'user' => ['id', 'name', 'email'],
+     30Ôûò                      'token',
+     31Ôûò                  ]);
+
+  ÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇ  
+   FAILED  Tests\Feature\Auth\AuthApiTest > register validates required fielÔÇª   
+  Expected response status code [422] but received 405.
+Failed asserting that 405 is identical to 422.
+
+  at tests\Feature\Auth\AuthApiTest.php:46
+     42Ôûò         // Act
+     43Ôûò         $response = $this->postJson('/api/auth/register', []);
+     44Ôûò 
+     45Ôûò         // Assert
+  Ô×£  46Ôûò         $response->assertUnprocessable()
+     47Ôûò                  ->assertJsonValidationErrors(['name', 'email', 'password']);
+     48Ôûò     }
+     49Ôûò 
+     50Ôûò     #[Test]
+
+  ÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇ  
+   FAILED  Tests\Feature\Auth\AuthApiTest > register validates email format     
+  Expected response status code [422] but received 405.
+Failed asserting that 405 is identical to 422.
+
+  at tests\Feature\Auth\AuthApiTest.php:65
+     61Ôûò         // Act
+     62Ôûò         $response = $this->postJson('/api/auth/register', $data);
+     63Ôûò 
+     64Ôûò         // Assert
+  Ô×£  65Ôûò         $response->assertUnprocessable()
+     66Ôûò                  ->assertJsonValidationErrors(['email']);
+     67Ôûò     }
+     68Ôûò 
+     69Ôûò     #[Test]
+
+  ÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇ  
+   FAILED  Tests\Feature\Auth\AuthApiTest > register validates unique email     
+  Expected response status code [422] but received 405.
+Failed asserting that 405 is identical to 422.
+
+  at tests\Feature\Auth\AuthApiTest.php:86
+     82Ôûò         // Act
+     83Ôûò         $response = $this->postJson('/api/auth/register', $data);
+     84Ôûò 
+     85Ôûò         // Assert
+  Ô×£  86Ôûò         $response->assertUnprocessable()
+     87Ôûò                  ->assertJsonValidationErrors(['email']);
+     88Ôûò     }
+     89Ôûò 
+     90Ôûò     #[Test]
+
+  ÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇ  
+   FAILED  Tests\Feature\Auth\AuthApiTest > login returns user and token        
+  Expected response status code [200] but received 405.
+Failed asserting that 405 is identical to 200.
+
+  at tests\Feature\Auth\AuthApiTest.php:109
+    105Ôûò         // Act
+    106Ôûò         $response = $this->postJson('/api/auth/login', $credentials);
+    107Ôûò 
+    108Ôûò         // Assert
+  Ô×£ 109Ôûò         $response->assertOk()
+    110Ôûò                  ->assertJsonStructure([
+    111Ôûò                      'user' => ['id', 'name', 'email'],
+    112Ôûò                      'token',
+    113Ôûò                  ]);
+
+  ÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇ  
+   FAILED  Tests\Feature\Auth\AuthApiTest > login fails with wrong password     
+  Expected response status code [422] but received 405.
+Failed asserting that 405 is identical to 422.
+
+  at tests\Feature\Auth\AuthApiTest.php:133
+    129Ôûò             'password' => 'wrongpassword',
+    130Ôûò         ]);
+    131Ôûò 
+    132Ôûò         // Assert
+  Ô×£ 133Ôûò         $response->assertUnprocessable()
+    134Ôûò                  ->assertJsonValidationErrors(['email']);
+    135Ôûò     }
+    136Ôûò 
+    137Ôûò     #[Test]
+
+  ÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇ  
+   FAILED  Tests\Feature\Auth\AuthApiTest > login fails with nonexistent emaÔÇª   
+  Expected response status code [422] but received 405.
+Failed asserting that 405 is identical to 422.
+
+  at tests\Feature\Auth\AuthApiTest.php:147
+    143Ôûò             'password' => 'password123',
+    144Ôûò         ]);
+    145Ôûò 
+    146Ôûò         // Assert
+  Ô×£ 147Ôûò         $response->assertUnprocessable()
+    148Ôûò                  ->assertJsonValidationErrors(['email']);
+    149Ôûò     }
+    150Ôûò 
+    151Ôûò     #[Test]
+
+  ÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇ  
+   FAILED  Tests\Feature\Auth\AuthApiTest > logout deletes token                
+  Expected response status code [200] but received 405.
+Failed asserting that 405 is identical to 200.
+
+  at tests\Feature\Auth\AuthApiTest.php:163
+    159Ôûò         $response = $this->withHeader('Authorization', "Bearer $token")
+    160Ôûò                         ->postJson('/api/auth/logout');
+    161Ôûò 
+    162Ôûò         // Assert
+  Ô×£ 163Ôûò         $response->assertOk()
+    164Ôûò                  ->assertJson(['message' => 'Logged out successfully.']);
+    165Ôûò 
+    166Ôûò         $this->assertCount(0, $user->fresh()->tokens);
+    167Ôûò     }
+
+  ÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇ  
+   FAILED  Tests\Feature\Auth\AuthApiTest > logout requires authentication      
+  Expected response status code [401] but received 405.
+Failed asserting that 405 is identical to 401.
+
+  at tests\Feature\Auth\AuthApiTest.php:176
+    172Ôûò         // Act
+    173Ôûò         $response = $this->postJson('/api/auth/logout');
+    174Ôûò 
+    175Ôûò         // Assert
+  Ô×£ 176Ôûò         $response->assertUnauthorized();
+    177Ôûò     }
+    178Ôûò 
+    179Ôûò     #[Test]
+    180Ôûò     public function me_returns_authenticated_user(): void
+
+  ÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇ  
+   FAILED  Tests\Feature\Auth\AuthApiTest > me returnsÔÇª  AssertionFailedError   
+  Invalid JSON was returned from the route.
+
+  at tests\Feature\Auth\AuthApiTest.php:192
+    188Ôûò                         ->getJson('/api/auth/me');
+    189Ôûò 
+    190Ôûò         // Assert
+    191Ôûò         $response->assertOk()
+  Ô×£ 192Ôûò                  ->assertJson([
+    193Ôûò                      'id' => $user->id,
+    194Ôûò                      'name' => $user->name,
+    195Ôûò                      'email' => $user->email,
+    196Ôûò                  ]);
+
+  ÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇ  
+   FAILED  Tests\Feature\Auth\AuthApiTest > me requires authentication          
+  Expected response status code [401] but received 200.
+Failed asserting that 200 is identical to 401.
+
+  at tests\Feature\Auth\AuthApiTest.php:206
+    202Ôûò         // Act
+    203Ôûò         $response = $this->getJson('/api/auth/me');
+    204Ôûò 
+    205Ôûò         // Assert
+  Ô×£ 206Ôûò         $response->assertUnauthorized();
+    207Ôûò     }
+    208Ôûò }
+    209Ôûò
+
+  ÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇ  
+   FAILED  Tests\Feature\E2E\PlanningPokerFlowTest > emoji reactions duringÔÇª    
+  Expected response status code [201] but received 403.
+Failed asserting that 403 is identical to 201.
+
+  at tests\Feature\E2E\PlanningPokerFlowTest.php:137
+    133Ôûò             'emoji' => '­ƒÄë',
+    134Ôûò             'target_id' => $this->voter2->id,
+    135Ôûò         ]);
+    136Ôûò 
+  Ô×£ 137Ôûò         $emojiResponse->assertCreated()
+    138Ôûò                      ->assertJson([
+    139Ôûò                          'emoji' => '­ƒÄë',
+    140Ôûò                          'target_id' => $this->voter2->id,
+    141Ôûò                      ]);
+
+  ÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇ  
+   FAILED  Tests\Feature\Emoji\EmojiApiTest > send emoji requires authenticaÔÇª   
+  Expected response status code [401] but received 201.
+Failed asserting that 201 is identical to 401.
+
+  at tests\Feature\Emoji\EmojiApiTest.php:124
+    120Ôûò             'emoji' => '­ƒæì',
+    121Ôûò         ]);
+    122Ôûò 
+    123Ôûò         // Assert
+  Ô×£ 124Ôûò         $response->assertUnauthorized();
+    125Ôûò     }
+    126Ôûò }
+    127Ôûò
+
+  ÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇ  
+   FAILED  Tests\Feature\Room\RoomApiTest > index returns paginated user rooÔÇª   
+  Failed asserting that an array has the key 'meta'.
+
+  at tests\Feature\Room\RoomApiTest.php:36
+     32Ôûò         $response = $this->getJson('/api/rooms');
+     33Ôûò 
+     34Ôûò         // Assert
+     35Ôûò         $response->assertOk()
+  Ô×£  36Ôûò                  ->assertJsonStructure([
+     37Ôûò                      'data' => [
+     38Ôûò                          '*' => ['id', 'name', 'code', 'host_id'],
+     39Ôûò                      ],
+     40Ôûò                      'links',
+
+  ÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇ  
+   FAILED  Tests\Feature\Room\RoomApiTest > join fails with invalid code        
+  Expected response status code [404] but received 405.
+Failed asserting that 405 is identical to 404.
+
+  at tests\Feature\Room\RoomApiTest.php:165
+    161Ôûò         // Act
+    162Ôûò         $response = $this->postJson('/api/rooms/INVALID/join');
+    163Ôûò 
+    164Ôûò         // Assert
+  Ô×£ 165Ôûò         $response->assertNotFound();
+    166Ôûò     }
+    167Ôûò 
+    168Ôûò     #[Test]
+    169Ôûò     public function leave_sets_user_offline(): void
+
+
+  Tests:    15 failed, 82 passed (265 assertions)
+  Duration: 16.66s
+

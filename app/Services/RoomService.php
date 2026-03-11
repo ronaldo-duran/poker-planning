@@ -33,6 +33,7 @@ class RoomService
             'host_id' => $user->id,
             'card_config' => $data['card_config'] ?? [0, 1, 2, 3, 5, 8, 13, 21, '?'],
             'state' => 'waiting',
+            'emojis_blocked' => false,
         ]);
 
         $room->users()->attach($user->id, ['role' => 'host', 'is_online' => true]);
