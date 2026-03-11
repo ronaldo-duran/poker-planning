@@ -6,6 +6,10 @@ export const useAuthStore = defineStore('auth', () => {
     const user = ref(JSON.parse(localStorage.getItem('user') || 'null'));
     const token = ref(localStorage.getItem('token') || null);
 
+    if (token.value) {
+        axios.defaults.headers.common['Authorization'] = `Bearer ${token.value}`;
+    }
+
     const isLoggedIn = computed(() => !!token.value);
 
     function setAuth(userData, tokenValue) {

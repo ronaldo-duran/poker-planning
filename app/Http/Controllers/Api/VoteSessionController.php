@@ -62,6 +62,14 @@ class VoteSessionController extends Controller
             return response()->json(['message' => 'Forbidden.'], 403);
         }
 
-        return response()->json($this->sessionRepository->findById($voteSession->id));
+        $session = $this->sessionRepository->findById($voteSession->id);
+
+        // Hide individual votes from non-host members until the session is revealed,
+        // to preserve blind-voting behaviour.
+        if ($session->status !== 'revealed' && ! $isHost) {
+            $session->unsetRelation('votes');
+        }
+
+        return response()->json($session);
     }
 }

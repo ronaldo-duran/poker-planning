@@ -42,7 +42,7 @@ class RoomService
 
     public function joinRoom(User $user, string $code): Room
     {
-        $room = $this->roomRepository->findByCode($code);
+        $room = $this->roomRepository->findByCode(strtoupper($code));
 
         if (! $room) {
             abort(404, 'Room not found.');

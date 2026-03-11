@@ -16,6 +16,7 @@ export const useRoomStore = defineStore('room', () => {
                 ...u,
                 _voted: u._voted ?? false,
                 _reaction: u._reaction ?? null,
+                _online: u.pivot?.is_online ?? u._online ?? false,
             }));
         }
 
