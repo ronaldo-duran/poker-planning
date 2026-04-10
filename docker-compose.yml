@@ -38,7 +38,7 @@ services:
       REVERB_APP_ID: ${REVERB_APP_ID:-poker-planning}
       REVERB_APP_KEY: ${REVERB_APP_KEY:-poker-planning-key}
       REVERB_APP_SECRET: ${REVERB_APP_SECRET:-poker-planning-secret}
-      REVERB_HOST: 0.0.0.0
+      REVERB_HOST: 127.0.0.1
       REVERB_PORT: 8080
       REVERB_SCHEME: http
       REVERB_SCALING_ENABLED: "true"
