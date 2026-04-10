@@ -1,11 +1,25 @@
 version: '3.8'
 
 services:
+  # Load balancer — distributes HTTP and WebSocket traffic across app replicas
+  lb:
+    image: nginx:1.27-alpine
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "8080:8080"
+    volumes:
+      - ./docker/nginx/lb.conf:/etc/nginx/conf.d/default.conf:ro
+    depends_on:
+      - app
+    networks:
+      - app_network
+
+  # Application — scale with: docker compose up --scale app=3
   app:
     build:
       context: .
       target: production
-    container_name: poker_app
     restart: unless-stopped
     environment:
       APP_ENV: production
@@ -16,22 +30,28 @@ services:
       DB_DATABASE: ${DB_DATABASE:-poker_planning}
       DB_USERNAME: ${DB_USERNAME:-postgres}
       DB_PASSWORD: ${DB_PASSWORD:-secret}
+      CACHE_STORE: redis
+      SESSION_DRIVER: redis
+      QUEUE_CONNECTION: redis
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
       REVERB_APP_ID: ${REVERB_APP_ID:-poker-planning}
       REVERB_APP_KEY: ${REVERB_APP_KEY:-poker-planning-key}
       REVERB_APP_SECRET: ${REVERB_APP_SECRET:-poker-planning-secret}
-      REVERB_HOST: 0.0.0.0
+      REVERB_HOST: 127.0.0.1
       REVERB_PORT: 8080
       REVERB_SCHEME: http
+      REVERB_SCALING_ENABLED: "true"
       BROADCAST_CONNECTION: reverb
-      QUEUE_CONNECTION: database
     volumes:
       - app_storage:/var/www/html/storage/app/public
-    ports:
-      - "80:80"
-      - "8080:8080"
     depends_on:
       postgres:
         condition: service_healthy
+      redis:
+        condition: service_healthy
+    networks:
+      - app_network
 
   postgres:
     image: postgres:16-alpine
@@ -48,7 +68,28 @@ services:
       interval: 10s
       timeout: 5s
       retries: 5
+    networks:
+      - app_network
+
+  redis:
+    image: redis:7-alpine
+    restart: unless-stopped
+    command: redis-server --appendonly yes
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - app_network
+
+networks:
+  app_network:
+    driver: bridge
 
 volumes:
   app_storage:
   postgres_data:
+  redis_data:

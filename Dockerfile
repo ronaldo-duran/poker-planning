@@ -8,6 +8,13 @@ RUN apk add --no-cache \
 # Install PHP extensions
 RUN docker-php-ext-install pdo pdo_pgsql mbstring zip exif pcntl gd
 
+# Install phpredis extension (pinned for reproducible builds)
+RUN apk add --no-cache --virtual .build-deps $PHPIZE_DEPS \
+    && pecl install redis-6.1.0 \
+    && docker-php-ext-enable redis \
+    && apk del .build-deps \
+    && rm -rf /tmp/pear
+
 # Install Composer
 COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
 
@@ -52,6 +59,13 @@ RUN apk add --no-cache \
     nginx supervisor curl
 
 RUN docker-php-ext-install pdo pdo_pgsql mbstring zip exif pcntl gd
+
+# Install phpredis extension (pinned for reproducible builds)
+RUN apk add --no-cache --virtual .build-deps $PHPIZE_DEPS \
+    && pecl install redis-6.1.0 \
+    && docker-php-ext-enable redis \
+    && apk del .build-deps \
+    && rm -rf /tmp/pear
 
 COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
 
